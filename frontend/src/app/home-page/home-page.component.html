@@ -1,0 +1,17 @@
+<mat-toolbar color="primary">
+  <span>Daily Matrix</span>
+  <span class="example-spacer"></span>
+  <button mat-button [matMenuTriggerFor]="menu">
+    <mat-icon>person</mat-icon>
+    {{user.username}}
+  </button>
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item>Settings</button>
+    <button (click)="logout()" mat-menu-item>Logout</button>
+  </mat-menu>
+</mat-toolbar>
+
+<main>
+  <activity-editor *ngIf="user && userTasks" [user]="user" [userTasks]="userTasks"></activity-editor>
+  <goal-tracker *ngIf="user && userGoals" [user]="user" [userGoals]="userGoals"></goal-tracker>
+</main>

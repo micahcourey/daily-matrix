@@ -1,0 +1,46 @@
+{
+  "_meta": {
+    "sources": [
+      "loopback/common/models",
+      "loopback/server/models",
+      "../common/models",
+      "./models"
+    ],
+    "mixins": [
+      "loopback/common/mixins",
+      "loopback/server/mixins",
+      "../common/mixins",
+      "./mixins"
+    ]
+  },
+  "User": {
+    "dataSource": "matrixDS"
+  },
+  "AccessToken": {
+    "dataSource": "matrixDS",
+    "public": false
+  },
+  "ACL": {
+    "dataSource": "matrixDS",
+    "public": false
+  },
+  "RoleMapping": {
+    "dataSource": "matrixDS",
+    "public": false,
+    "options": {
+      "strictObjectIDCoercion": true
+    }
+  },
+  "Role": {
+    "dataSource": "matrixDS",
+    "public": false
+  },
+  "Task": {
+    "dataSource": "matrixDS",
+    "public": true
+  },
+  "Goal": {
+    "dataSource": "matrixDS",
+    "public": true
+  }
+}

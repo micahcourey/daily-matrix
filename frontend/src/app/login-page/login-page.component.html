@@ -1,0 +1,22 @@
+<mat-toolbar color="primary">
+  <span>Daily Matrix</span>
+</mat-toolbar>
+<main class="login" *ngIf="loginForm">
+  <!-- <h1>Daily Matrix</h1> -->
+  <div class="login-card">
+    <mat-card *ngIf="!loggedIn">
+      <mat-card-title>Login</mat-card-title>
+      <div>
+        <form class="login-container" [formGroup]="loginForm">
+          <mat-form-field>
+            <input  formControlName="email" type="email" matInput placeholder="Email">
+          </mat-form-field>
+          <mat-form-field>
+            <input formControlName="password" type="password" matInput placeholder="Password">
+          </mat-form-field>
+          <button mat-raised-button color="primary" (click)="doLogin()">Login</button>
+        </form>
+      </div>
+    </mat-card>
+  </div>
+</main>
