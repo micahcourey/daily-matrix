@@ -10,20 +10,20 @@ export class MxDialogComponent implements OnInit {
   @Input() title: string
   @Output() saveClicked = new EventEmitter
 
-  constructor(private dialog: MatDialog, private dialogRef) {}
+  constructor(private dialog: MatDialog) {}
 
   ngOnInit() {
   }
 
-  openDialog() {
+  // openDialog() {
 
-    const dialogConfig = new MatDialogConfig();
+  //   const dialogConfig = new MatDialogConfig();
 
-    dialogConfig.disableClose = true;
-    dialogConfig.autoFocus = true;
+  //   dialogConfig.disableClose = true;
+  //   dialogConfig.autoFocus = true;
 
-    this.dialog.open(MxDialogComponent, dialogConfig);
-  }
+  //   this.dialog.open(MxDialogComponent, dialogConfig);
+  // }
 
   close() {
     // this.dialogRef.close();
