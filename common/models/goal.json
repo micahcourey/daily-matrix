@@ -26,6 +26,10 @@
     "userId": {
       "type": "number",
       "required": true
+    },
+    "quarter_year": {
+      "type": "number",
+      "required": true
     }
   },
   "validations": [],

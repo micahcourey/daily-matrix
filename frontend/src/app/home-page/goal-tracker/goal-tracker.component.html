@@ -13,17 +13,30 @@
           </mat-panel-description>
         </div>
       </mat-expansion-panel-header>
-  
       <mat-selection-list #goals>
-          <mat-list-option *ngFor="let goal of quarter.goals">
+        <div class="list-item" *ngFor="let goal of quarter.goals">
+          <mat-list-option *ngIf="!editMode">
             {{goal.body}}
           </mat-list-option>
+          <div class="goal-actions" *ngIf="editMode && goalForm">
+            <mat-form-field [formGroup]="goalForm" class="goal-input">
+              <input matInput [formControlName]="goal.id">
+            </mat-form-field>
+            <button mat-button color="warn" (click)="deleteGoal(goal.id)"><mat-icon>delete</mat-icon></button>
+          </div>
+        </div>
+
       </mat-selection-list>
   
       <mat-action-row>
-        <button mat-button color="primary" (click)="showAddGoal = true">Add Goal</button>
+        <span *ngIf="!editMode">
+          <button class="edit-button" mat-raised-button (click)="editGoals()">Edit Goals</button>
+          <button mat-raised-button color="primary" (click)="openDialog(quarter)">Add Goal</button>
+        </span>
+        <span *ngIf="editMode">
+          <button mat-raised-button color="accent" (click)="saveGoals()">Save</button>
+        </span>
       </mat-action-row>
     </mat-expansion-panel>
   </mat-accordion>
-
 </div>

@@ -97,7 +97,7 @@ export class UserService {
 	 
 	setUser(userId: string, token: string) {
 		return new Promise( (resolve, reject) => {
-			let sub = this.http.get(`${this.apiUrl}/Users/${userId}?access_token=${token}`)
+			const sub = this.http.get(`${this.apiUrl}/Users/${userId}?access_token=${token}`)
 			.pipe(map(this.extractData)).pipe(catchError(this.handleError));
 
 			sub.subscribe((res) => { 
@@ -107,6 +107,8 @@ export class UserService {
 				this.loggedIn = true;
 				this.loginStatusChange.next({logged_in: true});
 				resolve(res);
+			}, (rej) => {
+				console.log(rej)
 			}); 
 		});
 	}
@@ -123,12 +125,13 @@ export class UserService {
 	getTasks() {
 		return new Promise( (resolve, reject) => {
 			const token = localStorage.getItem('matrix_auth_token');
-			let sub = this.http.get(`${this.apiUrl}/Tasks/?access_token=${token}`)
-			.pipe(map(this.extractData)).pipe(catchError(this.handleError));
-
+			const sub = this.http.get(`${this.apiUrl}/Tasks/?access_token=${token}`)
+				.pipe(map(this.extractData)).pipe(catchError(this.handleError));
 			sub.subscribe((res) => { 
 				console.log(res)
 				resolve(res);
+			}, (rej) => {
+				console.log(rej)
 			}); 
 		});
 	}
@@ -136,41 +139,93 @@ export class UserService {
 	getGoals() {
 		return new Promise( (resolve, reject) => {
 			const token = localStorage.getItem('matrix_auth_token');
-			let sub = this.http.get(`${this.apiUrl}/Goals/?access_token=${token}`)
-			.pipe(map(this.extractData)).pipe(catchError(this.handleError));
-
+			const sub = this.http.get(`${this.apiUrl}/Goals/?access_token=${token}`)
+				.pipe(map(this.extractData)).pipe(catchError(this.handleError));
 			sub.subscribe((res) => { 
 				console.log(res)
 				resolve(res);
+			}, (rej) => {
+				console.log(rej)
 			}); 
 		});
 	}
 
+
+
 	postTask(task) {
+		console.log(task)
 		return new Promise( (resolve, reject) => {
 			const token = localStorage.getItem('matrix_auth_token');
-			let sub = this.http.post(`${this.apiUrl}/Tasks/?access_token=${token}`, task)
-			.pipe(map(this.extractData)).pipe(catchError(this.handleError));
-
+			const sub = this.http.post(`${this.apiUrl}/Tasks/?access_token=${token}`, task)
+				.pipe(map(this.extractData)).pipe(catchError(this.handleError));
 			sub.subscribe((res) => { 
 				console.log(res)
 				resolve(res);
+			}, (rej) => {
+				console.log(rej)
 			}); 
 		});
 	}
 
 	patchTask(task, taskId) {
 		return new Promise( (resolve, reject) => {
+			console.log(task)
 			const token = localStorage.getItem('matrix_auth_token');
-			let sub = this.http.patch(`${this.apiUrl}/Tasks/${taskId}?access_token=${token}`, task)
-			.pipe(map(this.extractData)).pipe(catchError(this.handleError));
-
+			const sub = this.http.patch(`${this.apiUrl}/Tasks/${taskId}?access_token=${token}`, task)
+				.pipe(map(this.extractData)).pipe(catchError(this.handleError));
 			sub.subscribe((res) => { 
 				console.log(res)
 				resolve(res);
+			}, (rej) => {
+				console.log(rej)
 			}); 
 		});
 	}
+
+	postGoal(goal) {
+		return new Promise( (resolve, reject) => {
+			const token = localStorage.getItem('matrix_auth_token');
+			console.log(`${this.apiUrl}/Goals/?access_token=${token}`)
+			const sub = this.http.post(`${this.apiUrl}/Goals/?access_token=${token}`, goal)
+				.pipe(map(this.extractData)).pipe(catchError(this.handleError));
+			sub.subscribe((res) => { 
+				console.log(res)
+				resolve(res);
+			}, (rej) => {
+				console.log(rej)
+			}); 
+		});
+	}
+
+	patchGoal(goal, goalId) {
+		return new Promise( (resolve, reject) => {
+			const token = localStorage.getItem('matrix_auth_token');
+			const sub = this.http.patch(`${this.apiUrl}/Goals/${goalId}?access_token=${token}`, goal)
+				.pipe(map(this.extractData)).pipe(catchError(this.handleError));
+			sub.subscribe((res) => { 
+				console.log(res)
+				resolve(res);
+			}, (rej) => {
+				console.log(rej)
+			}); 
+		});
+	}
+
+	deleteGoal(goalId) {
+		return new Promise( (resolve, reject) => {
+			const token = localStorage.getItem('matrix_auth_token');
+			const sub = this.http.delete(`${this.apiUrl}/Goals/${goalId}?access_token=${token}`)
+				.pipe(map(this.extractData)).pipe(catchError(this.handleError));
+			sub.subscribe((res) => { 
+				console.log(res)
+				resolve(res);
+			}, (rej) => {
+				console.log(rej)
+			}); 
+		});
+	}
+
+
 
 	// testUniqueResetParams(uniqueParams) {
 	// 	return new Promise((resolve, reject) => {

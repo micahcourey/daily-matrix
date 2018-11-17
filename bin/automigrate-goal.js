@@ -10,7 +10,9 @@ ds.automigrate('Goal', function(err) {
       body: 'Finish the Daily Matrix App',
       date: new Date(),
       quarter: 4,
-      userId: 3
+      quarter_year: 2018,
+      userId: 3,
+      active: true
     },
   ];
   var count = goals.length;

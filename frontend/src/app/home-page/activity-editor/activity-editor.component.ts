@@ -4,9 +4,9 @@ import {MatSnackBar} from '@angular/material';
 import { SubscriptionLike as ISubscription } from 'rxjs'
 import { debounceTime, take } from 'rxjs/operators'
 import { FormGroup, Validators, FormControl } from '@angular/forms'
-import {ErrorStateMatcher} from '@angular/material/core';
 import * as moment from 'moment'
 import { UserService } from '../../services/user.service'
+import { Task } from '../../interfaces/task.interface'
 
 @Component({
   selector: 'activity-editor',
@@ -39,6 +39,7 @@ export class ActivityEditorComponent implements OnInit {
     this.todayError = false
     this.tomorrowError = false
     this.today = moment().format('YYYY-MM-DD')
+    console.log(this.today)
     this.yesterday = this.setYesterday(this.today)
     this.tomorrow = this.setTomorrow(this.today)
     this.encouragingMessages = this.getEncouragingMessages()
@@ -52,6 +53,7 @@ export class ActivityEditorComponent implements OnInit {
       this.todaysTask = this.findTask(this.today)
       this.tomorrowsTask = this.findTask(this.tomorrow)
       this.patchForms()
+      console.log(this.todaysTask)
     }
   }
 
@@ -88,6 +90,7 @@ export class ActivityEditorComponent implements OnInit {
       this.tomorrowError = false
       const task = this.findTask(this.tomorrow)
       if (task) {
+        console.log(task)
         this.patchTask(this.tomorrowForm.get('task').value, this.tomorrow, task.id)
         return
       }
@@ -123,7 +126,7 @@ export class ActivityEditorComponent implements OnInit {
   }
 
   findTask(day) {
-    return this.userTasks.find(task => moment(task.date).format('ll') === moment(day).format('ll'))
+    return this.userTasks.find(task => moment(task.date.split('T')[0]).format('ll') === moment(day).format('ll'))
   }
 
   patchForms() {

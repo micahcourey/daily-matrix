@@ -40,8 +40,7 @@ import { AppComponent } from './app.component';
 import { LoginPageComponent } from './login-page/login-page.component';
 import { HomePageComponent } from './home-page/home-page.component';
 import { ActivityEditorComponent } from './home-page/activity-editor/activity-editor.component';
-import { GoalTrackerComponent } from './home-page/goal-tracker/goal-tracker.component';
-import { MxDialogComponent } from './shared/mx-dialog/mx-dialog.component';
+import { GoalTrackerComponent, GoalDialogComponent } from './home-page/goal-tracker/goal-tracker.component';
 
 const routes: Routes = [ ];
 
@@ -52,7 +51,7 @@ const routes: Routes = [ ];
     HomePageComponent,
     ActivityEditorComponent,
     GoalTrackerComponent,
-    MxDialogComponent,
+    GoalDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -78,7 +77,7 @@ const routes: Routes = [ ];
     MatIconModule,
     MatListModule,
     MatExpansionModule,
-    MatDialogModule
+    MatDialogModule,
   ],
   providers: [
     ApiService,
@@ -86,6 +85,6 @@ const routes: Routes = [ ];
     LoggedInGuard,
   ],
   bootstrap: [AppComponent],
-  entryComponents: [MxDialogComponent]
+  entryComponents: [GoalDialogComponent]
 })
 export class AppModule { }

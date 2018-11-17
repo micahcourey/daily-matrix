@@ -1,5 +1,10 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Inject } from '@angular/core';
+import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material'
+import { FormGroup, FormControl } from '@angular/forms'
+import { SubscriptionLike as ISubscription } from 'rxjs'
+import { UserService } from '../../services/user.service'
 import * as moment from 'moment'
+import { Goal } from '../../interfaces/goal.interface'
 
 @Component({
   selector: 'goal-tracker',
@@ -12,9 +17,12 @@ export class GoalTrackerComponent implements OnInit {
   
   step = 0
   showAddGoal: boolean
+  editMode: boolean
   quarters: Array<any>
+  goalForm: FormGroup
+  goalSub: ISubscription
 
-  constructor() { 
+  constructor(private dialog: MatDialog, private _userService: UserService) { 
     console.log('quarters', this.quarters)
   }
 
@@ -25,8 +33,61 @@ export class GoalTrackerComponent implements OnInit {
     }
   }
 
-  addGoal() {
+  addGoal(goal: Goal) {
+    console.log('goal', goal)
+    this._userService.postGoal(goal).then((res) => {
+      this.userGoals.push(goal)
+      this.quarters = this.getQuarters();
+    })
+  }
 
+  deleteGoal(goalId) {
+    this._userService.deleteGoal(goalId).then((res) => {
+      console.log('deleted')
+      this.userGoals = this.userGoals.filter(goal => goal.id !== goalId)
+      this.quarters = this.getQuarters()
+    })
+  }
+
+  editGoals() {
+    this.goalForm = new FormGroup({})
+    this.userGoals.forEach((goal: Goal) => {
+      this.goalForm.addControl(goal.id.toString(), new FormControl(goal.body, []))
+    })
+    this.editMode = true;
+    console.log(this.goalForm)
+  }
+
+  saveGoals() {
+    const formVals = this.goalForm.value
+    console.log(formVals)
+    let updatableGoals = []
+    this.userGoals.forEach((goal: Goal) => {
+      if (goal.body !== formVals[goal.id]) {
+        goal.body = formVals[goal.id]
+        updatableGoals.push(goal)
+      }
+    })
+    console.log(updatableGoals)
+  }
+
+  openDialog(quarter): void {
+    let data: Goal = {
+      body: '', 
+      quarter: quarter.quarter, 
+      quarter_year: quarter.year,
+      date: moment().format('YYYY-MM-DD'),
+      active: true,
+      userId: this.user.id
+    }
+    const dialogRef = this.dialog.open(GoalDialogComponent, {
+      width: '350px',
+      data: data
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      this.addGoal(result)
+    });
   }
 
   setStep(index: number) {
@@ -45,33 +106,49 @@ export class GoalTrackerComponent implements OnInit {
     return [
       { 
         quarter: moment().quarter(), 
-        year: moment().format('YYYY'), 
+        year: +moment().format('YYYY'), 
         start: moment().quarter(moment().quarter()).format('ll'), 
         end: moment().add(1, 'Q').subtract(1, 'day').format('ll'),
         goals: this.userGoals.filter(goal => goal.quarter === moment().quarter())
       },
       { 
         quarter: moment().add(1, 'Q').quarter(), 
-        year: moment().add(1, 'Q').format('YYYY'), 
+        year: +moment().add(1, 'Q').format('YYYY'), 
         start: moment().quarter(moment().add(1, 'Q').quarter()).format('ll'), 
         end: moment().add(2, 'Q').subtract(1, 'day').format('ll'),
         goals: this.userGoals.filter(goal => goal.quarter === moment().add(1, 'Q').quarter())
       },
       { 
         quarter: moment().add(2, 'Q').quarter(),  
-        year: moment().add(2, 'Q').format('YYYY'), 
+        year: +moment().add(2, 'Q').format('YYYY'), 
         start: moment().add(2, 'Q').format('ll'), 
         end: moment().add(3, 'Q').subtract(1, 'day').format('ll'),
         goals: this.userGoals.filter(goal => goal.quarter === moment().add(2, 'Q').quarter())
       },
       { 
         quarter: moment().add(3, 'Q').quarter(), 
-        year: moment().add(3, 'Q').format('YYYY'), 
+        year: +moment().add(3, 'Q').format('YYYY'), 
         start: moment().add(3, 'Q').format('ll'), 
         end: moment().add(4, 'Q').subtract(1, 'day').format('ll'),
         goals: this.userGoals.filter(goal => goal.quarter === moment().add(3, 'Q').quarter())
       },
     ]
+  }
+
+}
+
+@Component({
+  selector: 'goal-dialog',
+  templateUrl: 'goal-dialog.component.html',
+})
+export class GoalDialogComponent {
+
+  constructor(
+    public dialogRef: MatDialogRef<GoalDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: Goal) {}
+
+  onNoClick(): void {
+    this.dialogRef.close();
   }
 
 }
