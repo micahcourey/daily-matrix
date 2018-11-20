@@ -1,8 +1,20 @@
 .goals-container {
-
+  margin-top: 1rem;
 }
+.goals-header {
+  height: 44px;
+}
+.goals-header > h1 {
+  margin: 0;
+}
+.goal-panel {
+  width: calc(50vw - 2rem);
+}
+// .goal-list-header {
+//   text-align: center;
+// }
 .goal-card {
-  width: 500px;
+  width: 100%;
 }
 .panel-header {
   width: 100%;
@@ -33,8 +45,11 @@
   flex-grow: 1;
 }
 
-@media(max-width: 500px) {
-  .goal-card {
+@media(max-width: 850px) {
+  .goal-panel {
     width: 100%;
+  }
+  .goals-container {
+    margin: 0 0.75rem 1rem 0.75rem;
   }
 }

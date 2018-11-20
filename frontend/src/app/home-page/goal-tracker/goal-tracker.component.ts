@@ -1,10 +1,12 @@
 import { Component, OnInit, Input, Inject } from '@angular/core';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material'
 import { FormGroup, FormControl } from '@angular/forms'
+import {MatSnackBar} from '@angular/material';
 import { SubscriptionLike as ISubscription } from 'rxjs'
 import { UserService } from '../../services/user.service'
 import * as moment from 'moment'
 import { Goal } from '../../interfaces/goal.interface'
+import { ValueConverter } from '@angular/compiler/src/render3/view/template';
 
 @Component({
   selector: 'goal-tracker',
@@ -22,7 +24,7 @@ export class GoalTrackerComponent implements OnInit {
   goalForm: FormGroup
   goalSub: ISubscription
 
-  constructor(private dialog: MatDialog, private _userService: UserService) { 
+  constructor(private dialog: MatDialog, private _userService: UserService, public snackBar: MatSnackBar) { 
     console.log('quarters', this.quarters)
   }
 
@@ -35,6 +37,7 @@ export class GoalTrackerComponent implements OnInit {
 
   addGoal(goal: Goal) {
     console.log('goal', goal)
+
     this._userService.postGoal(goal).then((res) => {
       this.userGoals.push(goal)
       this.quarters = this.getQuarters();
@@ -58,6 +61,19 @@ export class GoalTrackerComponent implements OnInit {
     console.log(this.goalForm)
   }
 
+  updateGoalStatus(goal) {
+    goal.active = !goal.active;
+    this._userService.patchGoal(goal).then((res) => {
+      console.log('goal updated', res)
+      if (goal.active) {
+        this.openSnackBar('Goal status updated', 'Saved')
+      } else {
+        this.openSnackBar('Nice job completing your goal!', 'Completed')
+      }
+
+    })
+  }
+
   saveGoals() {
     const formVals = this.goalForm.value
     console.log(formVals)
@@ -69,6 +85,17 @@ export class GoalTrackerComponent implements OnInit {
       }
     })
     console.log(updatableGoals)
+    updatableGoals.forEach((goal: Goal) => {
+      let i = 0;
+      this._userService.patchGoal(goal).then((res) => {
+        console.log('goal updated', res)
+        if (i === 0) {
+          this.openSnackBar('Your goals have been updated', 'Saved')
+        }
+        i++;
+      })
+    })
+    this.editMode = false
   }
 
   openDialog(quarter): void {
@@ -86,8 +113,17 @@ export class GoalTrackerComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
+      if (result === false) {
+        return
+      }
       this.addGoal(result)
     });
+  }
+
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 2000,
+    })
   }
 
   setStep(index: number) {
@@ -109,7 +145,7 @@ export class GoalTrackerComponent implements OnInit {
         year: +moment().format('YYYY'), 
         start: moment().quarter(moment().quarter()).format('ll'), 
         end: moment().add(1, 'Q').subtract(1, 'day').format('ll'),
-        goals: this.userGoals.filter(goal => goal.quarter === moment().quarter())
+        goals: this.userGoals.filter(goal => goal.quarter === moment().quarter()),
       },
       { 
         quarter: moment().add(1, 'Q').quarter(), 

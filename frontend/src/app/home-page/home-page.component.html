@@ -1,4 +1,4 @@
-<mat-toolbar color="primary">
+<mat-toolbar class="nav-bar" color="primary">
   <span>Daily Matrix</span>
   <span class="example-spacer"></span>
   <button mat-button [matMenuTriggerFor]="menu">
@@ -11,7 +11,18 @@
   </mat-menu>
 </mat-toolbar>
 
-<main>
-  <activity-editor *ngIf="user && userTasks" [user]="user" [userTasks]="userTasks"></activity-editor>
-  <goal-tracker *ngIf="user && userGoals" [user]="user" [userGoals]="userGoals"></goal-tracker>
-</main>
+<section class="main-container">
+  <mat-tab-group class="tabs">
+    <mat-tab label="Editor">
+      <div class="tab-body">
+        <activity-editor *ngIf="user && userTasks" [user]="user" [userTasks]="userTasks"></activity-editor>
+        <mat-divider class="divider" [vertical]="true"></mat-divider>
+        <goal-tracker *ngIf="user && userGoals" [user]="user" [userGoals]="userGoals"></goal-tracker>
+      </div>
+    </mat-tab>
+    <mat-tab label="Overview">
+      <h1>Some more tab content</h1>
+      <p>...</p>
+    </mat-tab>
+  </mat-tab-group>
+</section>

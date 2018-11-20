@@ -197,10 +197,10 @@ export class UserService {
 		});
 	}
 
-	patchGoal(goal, goalId) {
+	patchGoal(goal) {
 		return new Promise( (resolve, reject) => {
 			const token = localStorage.getItem('matrix_auth_token');
-			const sub = this.http.patch(`${this.apiUrl}/Goals/${goalId}?access_token=${token}`, goal)
+			const sub = this.http.patch(`${this.apiUrl}/Goals/${goal.id}?access_token=${token}`, goal)
 				.pipe(map(this.extractData)).pipe(catchError(this.handleError));
 			sub.subscribe((res) => { 
 				console.log(res)
