@@ -3,7 +3,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Headers, Response, RequestOptions } from '@angular/http';
 import { map, catchError } from 'rxjs/operators';
-import { ApiService } from './api.service';
 import { environment } from '../../environments/environment';
 
 @Injectable()
@@ -13,7 +12,7 @@ export class UserService {
 	private apiUrl = environment.apiUrl;
 	private loginStatusChange: Subject<any>;
 
-  constructor(private http: HttpClient, private _apiService: ApiService) { 
+  constructor(private http: HttpClient) { 
     this.loggedIn = !!localStorage.getItem('matrix_auth_token');
     this.user = JSON.parse(localStorage.getItem('matrix_user'));
 		this.loginStatusChange = new Subject<any>();
@@ -75,7 +74,7 @@ export class UserService {
 						console.error(res.errors);
 						reject(res);
 					} else {
-            console.log(res);
+						console.log(res);
 						localStorage.setItem('matrix_auth_token', res.id);
 						this.setUser(res.userId, res.id).then((user) => {
 							resolve(user);
@@ -139,6 +138,36 @@ export class UserService {
 				.pipe(map(this.extractData)).pipe(catchError(this.handleError));
 			sub.subscribe((res) => { 
 				console.log(res)
+				resolve(res);
+			}, (rej) => {
+				console.log(rej)
+			}); 
+		});
+	}
+
+	resetPassword(newPassword) {
+		return new Promise((resolve, reject) => {
+			const token = localStorage.getItem('matrix_auth_token');
+			const sub = this.http.post(`${this.apiUrl}/Users/reset-password?access_token=${token}`, newPassword)
+				.pipe(map(this.extractData)).pipe(catchError(this.handleError));
+			sub.subscribe((res) => { 
+				console.log(res)
+				resolve(res);
+			}, (rej) => {
+				console.log(rej)
+			}); 
+		});
+	}
+	
+	updateUser(user) {
+		return new Promise((resolve, reject) => {
+			const token = localStorage.getItem('matrix_auth_token');
+			const sub = this.http.patch(`${this.apiUrl}/Users/${user.id}?access_token=${token}`, user)
+				.pipe(map(this.extractData)).pipe(catchError(this.handleError));
+			sub.subscribe((res) => { 
+				console.log(res)
+				localStorage.removeItem('matrix_user')
+				localStorage.setItem('matrix_user', JSON.stringify(res))
 				resolve(res);
 			}, (rej) => {
 				console.log(rej)

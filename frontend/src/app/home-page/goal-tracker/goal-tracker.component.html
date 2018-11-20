@@ -16,6 +16,10 @@
         </div>
       </mat-expansion-panel-header>
       <mat-selection-list *ngIf="!editMode" #goals>
+        <div *ngIf="!quarter.goals.length">
+          <p>You haven't set any goals for this quarter yet.</p>
+          <mat-icon>sentiment_very_dissatisfied</mat-icon>
+        </div>
         <div class="list-item" *ngFor="let goal of quarter.goals">
           <mat-list-option [value]="goal.active" (click)="updateGoalStatus(goal)" [checkboxPosition]="'before'" [selected]="!goal.active">
             {{goal.body}}
@@ -32,7 +36,7 @@
       </div>
       <mat-action-row>
         <span *ngIf="!editMode">
-          <button class="edit-button" mat-raised-button (click)="editGoals()">Edit Goals</button>
+          <button mat-raised-button *ngIf="quarter.goals.length" class="edit-button" (click)="editGoals()">Edit Goals</button>
           <button mat-raised-button color="primary" (click)="openDialog(quarter)">Add Goal</button>
         </span>
         <span *ngIf="editMode">

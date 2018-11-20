@@ -4,7 +4,7 @@
     <textarea matInput name="goal" [(ngModel)]="data.body" placeholder="What's your new goal?"></textarea>
   </mat-form-field>
 </div>
-<div mat-dialog-actions>
+<div style="justify-content: flex-end" mat-dialog-actions>
   <button mat-button [mat-dialog-close]="false">Cancel</button>
   <button mat-button [mat-dialog-close]="data" cdkFocusInitial>Save</button>
 </div>

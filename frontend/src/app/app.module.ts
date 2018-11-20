@@ -6,7 +6,6 @@ import { Routes, RouterModule } from '@angular/router';
 import { routing } from './app.routing';
 
 // Services
-import { ApiService } from './services/api.service';
 import { UserService } from './services/user.service';
 import { ReactiveFormsModule , FormsModule } from '@angular/forms';
 import { HttpClientModule, HttpClientJsonpModule } from '@angular/common/http';
@@ -38,8 +37,7 @@ import {
 
 // App Components
 import { AppComponent } from './app.component';
-
-import { LoginPageComponent } from './login-page/login-page.component';
+import { LoginPageComponent, ResetPasswordDialogComponent } from './login-page/login-page.component';
 import { HomePageComponent } from './home-page/home-page.component';
 import { ActivityEditorComponent } from './home-page/activity-editor/activity-editor.component';
 import { GoalTrackerComponent, GoalDialogComponent } from './home-page/goal-tracker/goal-tracker.component';
@@ -55,6 +53,7 @@ const routes: Routes = [ ];
     ActivityEditorComponent,
     GoalTrackerComponent,
     GoalDialogComponent,
+    ResetPasswordDialogComponent,
     AdminPageComponent
   ],
   imports: [
@@ -85,12 +84,11 @@ const routes: Routes = [ ];
     MatSelectModule
   ],
   providers: [
-    ApiService,
     UserService,
     LoggedInGuard,
     AdminGuard
   ],
   bootstrap: [AppComponent],
-  entryComponents: [GoalDialogComponent]
+  entryComponents: [GoalDialogComponent, ResetPasswordDialogComponent]
 })
 export class AppModule { }

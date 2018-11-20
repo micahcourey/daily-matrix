@@ -20,7 +20,8 @@ export class AdminPageComponent implements OnInit {
       email: new FormControl('', [ Validators.required, Validators.email ]),
       username: new FormControl('', [ Validators.required ]),
       password: new FormControl('', [ Validators.required ]),
-      userLevel: new FormControl('user', [ Validators.required ])
+      realm: new FormControl('user', [ Validators.required ]),
+      emailVerified: new FormControl(false, [])
     })
   }
 
