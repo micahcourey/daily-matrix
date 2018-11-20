@@ -39,7 +39,7 @@ export class GoalTrackerComponent implements OnInit {
     console.log('goal', goal)
 
     this._userService.postGoal(goal).then((res) => {
-      this.userGoals.push(goal)
+      this.userGoals.push(res)
       this.quarters = this.getQuarters();
     })
   }
@@ -55,6 +55,7 @@ export class GoalTrackerComponent implements OnInit {
   editGoals() {
     this.goalForm = new FormGroup({})
     this.userGoals.forEach((goal: Goal) => {
+      console.log(goal)
       this.goalForm.addControl(goal.id.toString(), new FormControl(goal.body, []))
     })
     this.editMode = true;

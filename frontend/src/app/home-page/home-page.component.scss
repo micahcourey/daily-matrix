@@ -16,12 +16,13 @@
 .nav-bar {
   height: 50px
 }
+.spacer {
+  flex: 1 1 auto;
+}
 .divider {
   margin: 0 1rem;
 }
-.example-spacer {
-  flex: 1 1 auto;
-}
+
 
 @media(max-width: 850px) {
   main {

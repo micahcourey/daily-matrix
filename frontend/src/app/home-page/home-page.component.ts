@@ -19,6 +19,7 @@ export class HomePageComponent implements OnInit {
   allTasks: any
   userGoals: any
   allGoals: any
+  isAdmin = false;
 
   constructor(private _userService: UserService, private router: Router, public snackBar: MatSnackBar, private ngZone: NgZone) { 
 
@@ -26,6 +27,9 @@ export class HomePageComponent implements OnInit {
 
   ngOnInit() {
     this.user = JSON.parse(localStorage.getItem('matrix_user'))
+    if (this._userService.isAdmin()) {
+      this.isAdmin = true;
+    }
     this._userService.getTasks().then((tasks: Array<any>) => {
       console.log(tasks)
       this.allTasks = tasks

@@ -1,11 +1,12 @@
 <mat-toolbar class="nav-bar" color="primary">
-  <span>Daily Matrix</span>
-  <span class="example-spacer"></span>
+  <span routerLink="/home">Daily Matrix</span>
+  <span class="spacer"></span>
   <button mat-button [matMenuTriggerFor]="menu">
     <mat-icon>person</mat-icon>
     {{user.username}}
   </button>
   <mat-menu #menu="matMenu">
+    <button *ngIf="isAdmin" routerLink="/admin" mat-menu-item>Administration</button>
     <button mat-menu-item>Settings</button>
     <button (click)="logout()" mat-menu-item>Logout</button>
   </mat-menu>

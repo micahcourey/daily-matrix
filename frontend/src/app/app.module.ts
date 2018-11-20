@@ -13,6 +13,7 @@ import { HttpClientModule, HttpClientJsonpModule } from '@angular/common/http';
 
 // Guards
 import { LoggedInGuard } from './guards/logged-in.guard';
+import { AdminGuard } from './guards/admin.guard';
 
 // Material Components
 import {
@@ -31,7 +32,8 @@ import {
   MatToolbarModule,
   MatListModule,
   MatExpansionModule,
-  MatDialogModule
+  MatDialogModule,
+  MatSelectModule
 } from '@angular/material';
 
 // App Components
@@ -41,6 +43,7 @@ import { LoginPageComponent } from './login-page/login-page.component';
 import { HomePageComponent } from './home-page/home-page.component';
 import { ActivityEditorComponent } from './home-page/activity-editor/activity-editor.component';
 import { GoalTrackerComponent, GoalDialogComponent } from './home-page/goal-tracker/goal-tracker.component';
+import { AdminPageComponent } from './admin-page/admin-page.component';
 
 const routes: Routes = [ ];
 
@@ -51,7 +54,8 @@ const routes: Routes = [ ];
     HomePageComponent,
     ActivityEditorComponent,
     GoalTrackerComponent,
-    GoalDialogComponent
+    GoalDialogComponent,
+    AdminPageComponent
   ],
   imports: [
     BrowserModule,
@@ -78,11 +82,13 @@ const routes: Routes = [ ];
     MatListModule,
     MatExpansionModule,
     MatDialogModule,
+    MatSelectModule
   ],
   providers: [
     ApiService,
     UserService,
     LoggedInGuard,
+    AdminGuard
   ],
   bootstrap: [AppComponent],
   entryComponents: [GoalDialogComponent]

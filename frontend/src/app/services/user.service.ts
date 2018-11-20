@@ -93,19 +93,29 @@ export class UserService {
 
 	isLoggedIn() {
 		return !!localStorage.getItem('matrix_auth_token');
-	 }
+	}
+
+	isAdmin() {
+		if(!this.loggedIn || !this.user) {
+			return false
+		}
+		if(this.user.realm === 'admin') {
+			return true
+		}
+		return false
+	}
 	 
 	setUser(userId: string, token: string) {
 		return new Promise( (resolve, reject) => {
 			const sub = this.http.get(`${this.apiUrl}/Users/${userId}?access_token=${token}`)
-			.pipe(map(this.extractData)).pipe(catchError(this.handleError));
+			.pipe(map(this.extractData)).pipe(catchError(this.handleError))
 
 			sub.subscribe((res) => { 
-				localStorage.setItem('matrix_user', JSON.stringify(res));
+				localStorage.setItem('matrix_user', JSON.stringify(res))
 				console.log(res)
 				this.user = res;
 				this.loggedIn = true;
-				this.loginStatusChange.next({logged_in: true});
+				this.loginStatusChange.next({logged_in: true})
 				resolve(res);
 			}, (rej) => {
 				console.log(rej)
@@ -122,8 +132,22 @@ export class UserService {
 		this.loginStatusChange.next({logged_in: false});
 	}
 
+	registerUser(user) {
+		return new Promise((resolve, reject) => {
+			const token = localStorage.getItem('matrix_auth_token');
+			const sub = this.http.post(`${this.apiUrl}/Users/?access_token=${token}`, user)
+				.pipe(map(this.extractData)).pipe(catchError(this.handleError));
+			sub.subscribe((res) => { 
+				console.log(res)
+				resolve(res);
+			}, (rej) => {
+				console.log(rej)
+			}); 
+		});
+	}
+
 	getTasks() {
-		return new Promise( (resolve, reject) => {
+		return new Promise((resolve, reject) => {
 			const token = localStorage.getItem('matrix_auth_token');
 			const sub = this.http.get(`${this.apiUrl}/Tasks/?access_token=${token}`)
 				.pipe(map(this.extractData)).pipe(catchError(this.handleError));
@@ -137,7 +161,7 @@ export class UserService {
 	}
 
 	getGoals() {
-		return new Promise( (resolve, reject) => {
+		return new Promise((resolve, reject) => {
 			const token = localStorage.getItem('matrix_auth_token');
 			const sub = this.http.get(`${this.apiUrl}/Goals/?access_token=${token}`)
 				.pipe(map(this.extractData)).pipe(catchError(this.handleError));
@@ -154,7 +178,7 @@ export class UserService {
 
 	postTask(task) {
 		console.log(task)
-		return new Promise( (resolve, reject) => {
+		return new Promise((resolve, reject) => {
 			const token = localStorage.getItem('matrix_auth_token');
 			const sub = this.http.post(`${this.apiUrl}/Tasks/?access_token=${token}`, task)
 				.pipe(map(this.extractData)).pipe(catchError(this.handleError));
@@ -168,7 +192,7 @@ export class UserService {
 	}
 
 	patchTask(task, taskId) {
-		return new Promise( (resolve, reject) => {
+		return new Promise((resolve, reject) => {
 			console.log(task)
 			const token = localStorage.getItem('matrix_auth_token');
 			const sub = this.http.patch(`${this.apiUrl}/Tasks/${taskId}?access_token=${token}`, task)
@@ -183,7 +207,7 @@ export class UserService {
 	}
 
 	postGoal(goal) {
-		return new Promise( (resolve, reject) => {
+		return new Promise((resolve, reject) => {
 			const token = localStorage.getItem('matrix_auth_token');
 			console.log(`${this.apiUrl}/Goals/?access_token=${token}`)
 			const sub = this.http.post(`${this.apiUrl}/Goals/?access_token=${token}`, goal)
@@ -198,7 +222,7 @@ export class UserService {
 	}
 
 	patchGoal(goal) {
-		return new Promise( (resolve, reject) => {
+		return new Promise((resolve, reject) => {
 			const token = localStorage.getItem('matrix_auth_token');
 			const sub = this.http.patch(`${this.apiUrl}/Goals/${goal.id}?access_token=${token}`, goal)
 				.pipe(map(this.extractData)).pipe(catchError(this.handleError));
@@ -212,7 +236,7 @@ export class UserService {
 	}
 
 	deleteGoal(goalId) {
-		return new Promise( (resolve, reject) => {
+		return new Promise((resolve, reject) => {
 			const token = localStorage.getItem('matrix_auth_token');
 			const sub = this.http.delete(`${this.apiUrl}/Goals/${goalId}?access_token=${token}`)
 				.pipe(map(this.extractData)).pipe(catchError(this.handleError));
