@@ -42,5 +42,9 @@
   "Goal": {
     "dataSource": "matrixDS",
     "public": true
+  },
+  "MatrixUser": {
+    "dataSource": "matrixDS",
+    "public": true
   }
 }
