@@ -37,7 +37,7 @@
             cdkTextareaAutosize #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="2" cdkAutosizeMaxRows="10">
           </textarea>
           <div class="form-error" *ngIf="todayError">
-            Your activity must be at least 20 characters in length.
+            Your activity must be at least 3 characters in length.
           </div>
         </mat-form-field>
         <mat-card-content class="card-content" *ngIf="todaysTask && !showForms">
@@ -64,7 +64,7 @@
           </textarea>
         </mat-form-field>
         <div class="form-error" *ngIf="tomorrowError">
-          Your activity must be at least 20 characters in length.
+          Your activity must be at least 3 characters in length.
         </div>
         <mat-card-content class="card-content" *ngIf="tomorrowsTask && !showForms">
           {{tomorrowsTask.body}}

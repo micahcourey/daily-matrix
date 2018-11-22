@@ -32,7 +32,8 @@ import {
   MatListModule,
   MatExpansionModule,
   MatDialogModule,
-  MatSelectModule
+  MatSelectModule,
+  MatTableModule
 } from '@angular/material';
 
 // App Components
@@ -42,6 +43,8 @@ import { HomePageComponent } from './home-page/home-page.component';
 import { ActivityEditorComponent } from './home-page/activity-editor/activity-editor.component';
 import { GoalTrackerComponent, GoalDialogComponent } from './home-page/goal-tracker/goal-tracker.component';
 import { AdminPageComponent } from './admin-page/admin-page.component';
+import { MatrixComponent } from './home-page/matrix/matrix.component';
+import { LeaderboardComponent } from './home-page/leaderboard/leaderboard.component';
 
 const routes: Routes = [ ];
 
@@ -54,7 +57,9 @@ const routes: Routes = [ ];
     GoalTrackerComponent,
     GoalDialogComponent,
     ResetPasswordDialogComponent,
-    AdminPageComponent
+    AdminPageComponent,
+    MatrixComponent,
+    LeaderboardComponent
   ],
   imports: [
     BrowserModule,
@@ -81,7 +86,8 @@ const routes: Routes = [ ];
     MatListModule,
     MatExpansionModule,
     MatDialogModule,
-    MatSelectModule
+    MatSelectModule,
+    MatTableModule
   ],
   providers: [
     UserService,

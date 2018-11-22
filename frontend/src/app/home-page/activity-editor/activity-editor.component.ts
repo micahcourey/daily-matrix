@@ -127,7 +127,7 @@ export class ActivityEditorComponent implements OnInit {
 
   findTask(day) {
     const task = this.userTasks.find(t => moment(t.date.split('T')[0]).format('ll') === moment(day).format('ll'))
-    if (task && (moment(task.date).day("Saturday") || moment(task.date).day("Sunday"))) {
+    if (!task && (moment(task.date).day("Saturday") || moment(task.date).day("Sunday"))) {
       console.log('today is the weekend!')
     }
     return task

@@ -67,7 +67,7 @@ export class UserService {
 			headers.append('Content-Type', 'application/json');
 
 			try{
-				let loginSub = this.http.post(`${this.apiUrl}/Users/login`, user).pipe(map(this.extractData));
+				let loginSub = this.http.post(`${this.apiUrl}/MatrixUsers/login`, user).pipe(map(this.extractData));
 
 				loginSub.subscribe((res: any) => {
 					if (res.errors) {
@@ -106,7 +106,7 @@ export class UserService {
 	 
 	setUser(userId: string, token: string) {
 		return new Promise( (resolve, reject) => {
-			const sub = this.http.get(`${this.apiUrl}/Users/${userId}?access_token=${token}`)
+			const sub = this.http.get(`${this.apiUrl}/MatrixUsers/${userId}?access_token=${token}`)
 			.pipe(map(this.extractData)).pipe(catchError(this.handleError))
 
 			sub.subscribe((res) => { 
@@ -134,7 +134,7 @@ export class UserService {
 	registerUser(user) {
 		return new Promise((resolve, reject) => {
 			const token = localStorage.getItem('matrix_auth_token');
-			const sub = this.http.post(`${this.apiUrl}/Users/?access_token=${token}`, user)
+			const sub = this.http.post(`${this.apiUrl}/MatrixUsers/?access_token=${token}`, user)
 				.pipe(map(this.extractData)).pipe(catchError(this.handleError));
 			sub.subscribe((res) => { 
 				console.log(res)
@@ -148,7 +148,7 @@ export class UserService {
 	resetPassword(newPassword) {
 		return new Promise((resolve, reject) => {
 			const token = localStorage.getItem('matrix_auth_token');
-			const sub = this.http.post(`${this.apiUrl}/Users/reset-password?access_token=${token}`, newPassword)
+			const sub = this.http.post(`${this.apiUrl}/MatrixUsers/reset-password?access_token=${token}`, newPassword)
 				.pipe(map(this.extractData)).pipe(catchError(this.handleError));
 			sub.subscribe((res) => { 
 				console.log(res)
@@ -162,12 +162,26 @@ export class UserService {
 	updateUser(user) {
 		return new Promise((resolve, reject) => {
 			const token = localStorage.getItem('matrix_auth_token');
-			const sub = this.http.patch(`${this.apiUrl}/Users/${user.id}?access_token=${token}`, user)
+			const sub = this.http.patch(`${this.apiUrl}/MatrixUsers/${user.id}?access_token=${token}`, user)
 				.pipe(map(this.extractData)).pipe(catchError(this.handleError));
 			sub.subscribe((res) => { 
 				console.log(res)
 				localStorage.removeItem('matrix_user')
 				localStorage.setItem('matrix_user', JSON.stringify(res))
+				resolve(res);
+			}, (rej) => {
+				console.log(rej)
+			}); 
+		});
+	}
+
+	getUsers() {
+		return new Promise((resolve, reject) => {
+			const token = localStorage.getItem('matrix_auth_token');
+			const sub = this.http.get(`${this.apiUrl}/MatrixUsers/?access_token=${token}`)
+				.pipe(map(this.extractData)).pipe(catchError(this.handleError));
+			sub.subscribe((res) => { 
+				console.log(res)
 				resolve(res);
 			}, (rej) => {
 				console.log(rej)
