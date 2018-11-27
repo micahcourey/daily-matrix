@@ -6,6 +6,9 @@
   <div class="login-card">
     <mat-card *ngIf="!loggedIn">
       <mat-card-title>Login</mat-card-title>
+      <div class="form-error" *ngIf="isError">
+        Your email address or password are not correct. Please try again.
+      </div>
       <div>
         <form class="login-container" [formGroup]="loginForm">
           <mat-form-field>

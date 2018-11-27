@@ -2,7 +2,7 @@ var path = require('path');
 
 var app = require(path.resolve(__dirname, '../server/server'));
 var ds = app.datasources.matrixDS;
-ds.automigrate('User', function(err) {
+ds.automigrate('MatrixUser', function(err) {
   if (err) throw err;
 
   var users = [
@@ -23,7 +23,7 @@ ds.automigrate('User', function(err) {
   ];
   var count = users.length;
   users.forEach(function(user) {
-    app.models.User.create(user, function(err, model) {
+    app.models.MatrixUser.create(user, function(err, model) {
       if (err) throw err;
 
       console.log('Created:', model);

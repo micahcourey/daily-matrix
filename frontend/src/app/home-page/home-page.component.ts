@@ -7,6 +7,9 @@ import { FormGroup, Validators, FormControl } from '@angular/forms'
 import * as moment from 'moment'
 import { UserService } from './../services/user.service'
 import { Router } from '@angular/router'
+import { User } from '../interfaces/user.interface';
+import { Task } from '../interfaces/task.interface';
+import { Goal } from '../interfaces/goal.interface';
 
 @Component({
   selector: 'app-home-page',
@@ -14,11 +17,13 @@ import { Router } from '@angular/router'
   styleUrls: ['./home-page.component.scss']
 })
 export class HomePageComponent implements OnInit {
-  user: any
-  userTasks: any
-  allTasks: any
-  userGoals: any
-  allGoals: any
+  user: User
+  users: Array<User>
+  userTasks: Array<Task>
+  allTasks: Array<Task>
+  userGoals: Array<Goal>
+  allGoals: Array<Goal>
+  isAdmin = false
 
   constructor(private _userService: UserService, private router: Router, public snackBar: MatSnackBar, private ngZone: NgZone) { 
 
@@ -26,6 +31,9 @@ export class HomePageComponent implements OnInit {
 
   ngOnInit() {
     this.user = JSON.parse(localStorage.getItem('matrix_user'))
+    if (this._userService.isAdmin()) {
+      this.isAdmin = true;
+    }
     this._userService.getTasks().then((tasks: Array<any>) => {
       console.log(tasks)
       this.allTasks = tasks
@@ -40,6 +48,10 @@ export class HomePageComponent implements OnInit {
       this.userGoals = goals.filter(goal => goal.userId === this.user.id)
     }, (error) => {
       console.log(error)
+    })
+    this._userService.getUsers().then((users: Array<User>) => {
+      this.users = users;
+      console.log('users', this.users)
     })
   }
 
