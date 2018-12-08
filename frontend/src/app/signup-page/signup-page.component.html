@@ -1,24 +1,24 @@
 <mat-toolbar color="primary">
   <span>Daily Matrix</span>
 </mat-toolbar>
-<main class="login" *ngIf="loginForm">
+<main class="login" *ngIf="signupForm">
   <!-- <h1>Daily Matrix</h1> -->
   <div class="login-card">
-    <mat-card *ngIf="!loggedIn">
-      <mat-card-title>Login</mat-card-title>
-      <div class="form-error" *ngIf="isError">
-        Your email address or password are not correct. Please try again.
-      </div>
+    <mat-card>
+      <mat-card-title>Sign Up</mat-card-title>
       <div>
-        <form class="login-container" [formGroup]="loginForm">
+        <form class="login-container" [formGroup]="signupForm">
           <mat-form-field>
             <input  formControlName="email" type="email" matInput placeholder="Email">
           </mat-form-field>
           <mat-form-field>
             <input formControlName="password" type="password" matInput placeholder="Password">
           </mat-form-field>
-          <button mat-raised-button color="primary" (click)="tryLogin()">Login</button>
+          <button mat-raised-button color="primary" (click)="tryRegister()">Login</button>
         </form>
+      </div>
+      <div class="social-signup">
+        <button mat-raised-button color="primary" (click)="tryRegister()">Signup with Google</button>
       </div>
     </mat-card>
   </div>

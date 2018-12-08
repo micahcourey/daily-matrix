@@ -1,8 +1,9 @@
-import { Component, OnInit, Inject } from '@angular/core';
-import { FormGroup, Validators, FormControl } from '@angular/forms';
+import { Component, OnInit, Inject } from '@angular/core'
+import { FormGroup, Validators, FormControl } from '@angular/forms'
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material'
-import { Router } from '@angular/router';
-import { UserService } from '../services/user.service';
+import { Router } from '@angular/router'
+import { UserService } from '../services/user.service'
+import { AuthService } from '../services/auth.service'
 
 @Component({
   selector: 'login-page',
@@ -18,7 +19,7 @@ export class LoginPageComponent implements OnInit {
   isError: boolean;
   user: any;
 
-  constructor(private _userService: UserService, private router: Router, private dialog: MatDialog) { 
+  constructor(private userService: UserService, private router: Router, private dialog: MatDialog, private authService: AuthService) { 
     this.loggingIn = false;
     this.loginError = "";
     this.loggedIn = false;
@@ -30,52 +31,22 @@ export class LoginPageComponent implements OnInit {
   }
 
   ngOnInit() {
-    if (this._userService.isLoggedIn()) {
-      this.router.navigate(['/home'])
-    }
+
   }
 
-  doLogin(){
-    this.isError = false
-		if (!this.loginForm.valid) {
-			this.apiLoginError = {email: ['Your email or password is not valid']};
-			return;
-    }
-    console.log(this.loginForm.value)
-		if (this.apiLoginError) {
-			this.apiLoginError = {};
-		}
- 		this._userService.login(this.loginForm.value).then((res:any) => {
-      this.loginError = "";
-      this.loggedIn = true;
-      this.user = res;
-      if (this.user.emailVerified === false) {
-        this.openDialog({ newPassword: ''})
-        return
-      }
-      this.router.navigate(['/home'])
-      console.log(res)
-			
- 		}, (errors:any)=>{
-      this.isError = true
-      this.apiLoginError = errors
-	  });
+  tryLogin(){
+    this.authService.doLogin(this.loginForm.value)
+    .then(res => {
+      this.router.navigate(['/home']);
+    }, err => {
+      console.log(err);
+      this.isError = true;
+      this.apiLoginError = err.message;
+    })
   }
 
   resetPassword(newPassword) {
     console.log(newPassword)
-    this._userService.resetPassword(newPassword).then((res) => {
-      this.user.emailVerified = true
-      this._userService.updateUser(this.user).then((res) => {
-        this.router.navigate(['/home'])
-      }, (error) => {
-        console.log(error)
-        this.openDialog({ newPassword: ''})
-      })
-    }, (error) => {
-      console.log(error)
-      this.openDialog({ newPassword: ''})
-    })
 
   }
   

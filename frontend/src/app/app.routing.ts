@@ -2,18 +2,19 @@ import { ModuleWithProviders } from '@angular/core'
 import { Routes, RouterModule } from '@angular/router'
 
 // Guards
-import { LoggedInGuard } from './guards/logged-in.guard'
-import { AdminGuard } from './guards/admin.guard'
+import { AuthGuard } from './auth.guard'
 
 // Components
 import { LoginPageComponent } from './login-page/login-page.component'
+import { SignupPageComponent } from './signup-page/signup-page.component'
 import { HomePageComponent } from './home-page/home-page.component'
 import { AdminPageComponent } from './admin-page/admin-page.component'
 
 const appRoutes: Routes = [
-  { path: '', component: LoginPageComponent },
-  { path: 'home', component: HomePageComponent, canActivate: [LoggedInGuard] },
-  { path: 'admin', component: AdminPageComponent, canActivate: [AdminGuard] }
+  { path: '', component: SignupPageComponent },
+  { path: 'login', component: LoginPageComponent },
+  { path: 'home', component: HomePageComponent, canActivate: [AuthGuard] },
+  { path: 'admin', component: AdminPageComponent, canActivate: [AuthGuard] }
 ];
 
 export const routing: ModuleWithProviders = RouterModule.forRoot(appRoutes)

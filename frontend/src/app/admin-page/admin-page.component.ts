@@ -16,31 +16,31 @@ export class AdminPageComponent implements OnInit {
   userForm: FormGroup
 
   constructor(private _userService: UserService, private router: Router, public snackBar: MatSnackBar) { 
-    this.userForm = new FormGroup({    
-      email: new FormControl('', [ Validators.required, Validators.email ]),
-      username: new FormControl('', [ Validators.required ]),
-      password: new FormControl('', [ Validators.required ]),
-      realm: new FormControl('user', [ Validators.required ]),
-      emailVerified: new FormControl(false, [])
-    })
+    // this.userForm = new FormGroup({    
+    //   email: new FormControl('', [ Validators.required, Validators.email ]),
+    //   username: new FormControl('', [ Validators.required ]),
+    //   password: new FormControl('', [ Validators.required ]),
+    //   realm: new FormControl('user', [ Validators.required ]),
+    //   emailVerified: new FormControl(false, [])
+    // })
   }
 
   ngOnInit() {
-    this.user = JSON.parse(localStorage.getItem('matrix_user'))
+    // this.user = JSON.parse(localStorage.getItem('matrix_user'))
   }
 
-  logout() {
-    this._userService.logout()
-    this.router.navigate(['/'])
-  }
+  // logout() {
+  //   this._userService.logout()
+  //   this.router.navigate(['/'])
+  // }
 
-  registerUser() {
-    console.log(this.userForm.value)
-    this._userService.registerUser(this.userForm.value).then((res) => {
-      console.log('user created', res)
-    }, (error) => {
-      console.log('oops')
-    })
-  }
+  // registerUser() {
+  //   console.log(this.userForm.value)
+  //   this._userService.registerUser(this.userForm.value).then((res) => {
+  //     console.log('user created', res)
+  //   }, (error) => {
+  //     console.log('oops')
+  //   })
+  // }
 
 }

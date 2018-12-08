@@ -5,14 +5,20 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { routing } from './app.routing';
 
+// Firebase Modules
+import { AngularFireModule } from 'angularfire2';
+import { AngularFirestoreModule } from 'angularfire2/firestore';
+import { AngularFireAuthModule } from 'angularfire2/auth';
+import { environment } from '../environments/environment';
+
 // Services
 import { UserService } from './services/user.service';
+import { AuthService } from './services/auth.service';
 import { ReactiveFormsModule , FormsModule } from '@angular/forms';
 import { HttpClientModule, HttpClientJsonpModule } from '@angular/common/http';
 
 // Guards
-import { LoggedInGuard } from './guards/logged-in.guard';
-import { AdminGuard } from './guards/admin.guard';
+import { AuthGuard } from './auth.guard'
 
 // Material Components
 import {
@@ -45,6 +51,7 @@ import { GoalTrackerComponent, GoalDialogComponent } from './home-page/goal-trac
 import { AdminPageComponent } from './admin-page/admin-page.component';
 import { MatrixComponent } from './home-page/matrix/matrix.component';
 import { LeaderboardComponent } from './home-page/leaderboard/leaderboard.component';
+import { SignupPageComponent } from './signup-page/signup-page.component'
 
 const routes: Routes = [ ];
 
@@ -59,7 +66,8 @@ const routes: Routes = [ ];
     ResetPasswordDialogComponent,
     AdminPageComponent,
     MatrixComponent,
-    LeaderboardComponent
+    LeaderboardComponent,
+    SignupPageComponent
   ],
   imports: [
     BrowserModule,
@@ -70,6 +78,9 @@ const routes: Routes = [ ];
     HttpClientJsonpModule,
     routing,
     RouterModule.forRoot(routes),
+    AngularFireModule.initializeApp(environment.firebase),
+    AngularFirestoreModule,
+    AngularFireAuthModule,
     MatButtonModule, 
     MatFormFieldModule, 
     MatInputModule,
@@ -91,8 +102,8 @@ const routes: Routes = [ ];
   ],
   providers: [
     UserService,
-    LoggedInGuard,
-    AdminGuard
+    AuthService,
+    AuthGuard
   ],
   bootstrap: [AppComponent],
   entryComponents: [GoalDialogComponent, ResetPasswordDialogComponent]

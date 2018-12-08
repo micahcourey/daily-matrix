@@ -1,15 +1,11 @@
-import { Component, OnInit, ViewChild, NgZone } from '@angular/core'
-import {CdkTextareaAutosize} from '@angular/cdk/text-field';
-import {MatSnackBar} from '@angular/material';
-import { SubscriptionLike as ISubscription } from 'rxjs'
-import { debounceTime, take } from 'rxjs/operators'
-import { FormGroup, Validators, FormControl } from '@angular/forms'
-import * as moment from 'moment'
+import { Component, OnInit, NgZone } from '@angular/core'
+import { Router, ActivatedRoute } from '@angular/router'
+import {MatSnackBar} from '@angular/material'
 import { UserService } from './../services/user.service'
-import { Router } from '@angular/router'
-import { User } from '../interfaces/user.interface';
-import { Task } from '../interfaces/task.interface';
-import { Goal } from '../interfaces/goal.interface';
+import { AuthService } from './../services/auth.service'
+import { User } from '../services/user.model'
+import { Task } from '../interfaces/task.interface'
+import { Goal } from '../interfaces/goal.interface'
 
 @Component({
   selector: 'app-home-page',
@@ -17,7 +13,7 @@ import { Goal } from '../interfaces/goal.interface';
   styleUrls: ['./home-page.component.scss']
 })
 export class HomePageComponent implements OnInit {
-  user: User
+  user: User = new User()
   users: Array<User>
   userTasks: Array<Task>
   allTasks: Array<Task>
@@ -25,38 +21,48 @@ export class HomePageComponent implements OnInit {
   allGoals: Array<Goal>
   isAdmin = false
 
-  constructor(private _userService: UserService, private router: Router, public snackBar: MatSnackBar, private ngZone: NgZone) { 
+  constructor(
+    private userService: UserService, 
+    private authService: AuthService,
+    private router: Router, 
+    private route: ActivatedRoute,
+    public snackBar: MatSnackBar, 
+    private ngZone: NgZone
+  ) { 
 
   }
 
   ngOnInit() {
-    this.user = JSON.parse(localStorage.getItem('matrix_user'))
-    if (this._userService.isAdmin()) {
-      this.isAdmin = true;
-    }
-    this._userService.getTasks().then((tasks: Array<any>) => {
+    this.route.data.subscribe(routeData => {
+      let data = routeData['data'];
+      if (data) {
+        this.user = data;
+        console.log('user', this.user)
+      }
+    })
+    this.userService.getTasks().then((tasks: Array<any>) => {
       console.log(tasks)
       this.allTasks = tasks
-      this.userTasks = tasks.filter(task => task.userId === this.user.id)
+      this.userTasks = tasks.filter(task => task.userId === this.user.uid)
       console.log('userTasks', this.userTasks)
     }, (error) => {
       console.log(error)
     })
-    this._userService.getGoals().then((goals: Array<any>) => {
+    this.userService.getGoals().then((goals: Array<any>) => {
       console.log('all goals', goals)
       this.allGoals = goals
-      this.userGoals = goals.filter(goal => goal.userId === this.user.id)
+      this.userGoals = goals.filter(goal => goal.userId === this.user.uid)
     }, (error) => {
       console.log(error)
     })
-    this._userService.getUsers().then((users: Array<User>) => {
+    this.userService.getUsers().then((users: Array<User>) => {
       this.users = users;
       console.log('users', this.users)
     })
   }
 
   logout() {
-    this._userService.logout()
+    this.authService.doLogout()
     this.router.navigate(['/'])
   }
 
