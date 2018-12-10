@@ -1950,7 +1950,6 @@ var UserService = /** @class */ (function () {
         return new Promise(function (resolve, reject) {
             var user = firebase_app__WEBPACK_IMPORTED_MODULE_6__["auth"]().onAuthStateChanged(function (user) {
                 if (user) {
-                    this.user = user;
                     resolve(user);
                 }
                 else {

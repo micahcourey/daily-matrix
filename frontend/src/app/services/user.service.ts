@@ -73,7 +73,6 @@ export class UserService {
     return new Promise<any>((resolve, reject) => {
       let user = firebase.auth().onAuthStateChanged(function(user){
         if (user) {
-					this.user = user
           resolve(user);
         } else {
           reject('No user logged in');
@@ -139,16 +138,14 @@ export class UserService {
 		})
 	}
 
-
-
 	postTask(task) {
 		console.log(task)
-		return this.db.collection('tasks').add(task);
+		return this.db.collection('tasks').add(task)
 	}
 
 	patchTask(task, taskId) {
 		console.log(taskId, task)
-		return this.db.collection('tasks').doc(taskId).update(task);
+		return this.db.collection('tasks').doc(taskId).update(task)
 	}
 
 	postGoal(goal) {
