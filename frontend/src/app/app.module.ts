@@ -19,6 +19,7 @@ import { HttpClientModule, HttpClientJsonpModule } from '@angular/common/http';
 
 // Guards
 import { AuthGuard } from './auth.guard'
+import { UserResolver } from './home-page/user.resolver';
 
 // Material Components
 import {
@@ -103,7 +104,8 @@ const routes: Routes = [ ];
   providers: [
     UserService,
     AuthService,
-    AuthGuard
+    AuthGuard,
+    UserResolver
   ],
   bootstrap: [AppComponent],
   entryComponents: [GoalDialogComponent, ResetPasswordDialogComponent]

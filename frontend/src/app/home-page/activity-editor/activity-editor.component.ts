@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, NgZone, Input } from '@angular/core'
+import { Component, OnInit, ViewChild, NgZone, Input, Output, EventEmitter } from '@angular/core'
 import {CdkTextareaAutosize} from '@angular/cdk/text-field';
 import {MatSnackBar} from '@angular/material';
 import { SubscriptionLike as ISubscription } from 'rxjs'
@@ -17,6 +17,7 @@ export class ActivityEditorComponent implements OnInit {
   @ViewChild('autosize') autosize: CdkTextareaAutosize
   @Input() userTasks
   @Input() user
+  @Output() update = new EventEmitter();
 
   todayForm: FormGroup
   tomorrowForm: FormGroup
@@ -38,7 +39,7 @@ export class ActivityEditorComponent implements OnInit {
     this.showForms = true
     this.todayError = false
     this.tomorrowError = false
-    this.today = moment().format('YYYY-MM-DD')
+    this.today = moment().format('MM-DD-YYYY')
     console.log(this.today)
     this.yesterday = this.setYesterday(this.today)
     this.tomorrow = this.setTomorrow(this.today)
@@ -48,7 +49,7 @@ export class ActivityEditorComponent implements OnInit {
   }
 
   ngOnInit() {
-    if (this.userTasks) {
+    if (this.userTasks && this.user) {
       this.yesterdaysTask = this.findTask(this.yesterday)
       this.todaysTask = this.findTask(this.today)
       this.tomorrowsTask = this.findTask(this.tomorrow)
@@ -59,51 +60,63 @@ export class ActivityEditorComponent implements OnInit {
 
   buildForms() {
     this.todayForm = new FormGroup({    
-			task: new FormControl('', [ Validators.required, Validators.minLength(3) ]),
-			date: new FormControl(new Date(), [ ])
+      body: new FormControl('', []),
+      date: new FormControl(new Date(), [])
     })
     this.tomorrowForm = new FormGroup({    
-			task: new FormControl('', [ Validators.required, Validators.minLength(3) ]),
-			date: new FormControl(moment().add(1, 'days'), [ ])
+			body: new FormControl('', [])
     })
   }
 
   buildSubscriptions() {
-    this.todaySub = this.todayForm.get('task').valueChanges.pipe(debounceTime(2000)).subscribe(() => {
+    this.todaySub = this.todayForm.get('body').valueChanges.pipe(debounceTime(2000)).subscribe(() => {
+      console.log(this.todayForm)
       if (!this.todayForm.valid) {
         this.todayError = true
         return
       }
       this.todayError = false
-      const task = this.findTask(this.today)
-      if (task) {
-        this.patchTask(this.todayForm.get('task').value, this.today, task.id)
+      const task = {
+        body: this.todayForm.get('body').value, 
+        date: this.today, 
+        userId: this.user.uid
+      }
+      const existingTask = this.findTask(this.today)
+      if (existingTask) {
+        console.log(this.todayForm.value)
+        this.patchTask(task, existingTask.id)
         return
       }
-      this.postTask(this.todayForm.get('task').value, this.today)
+      this.postTask(task)
     })
-    this.tomorrowSub = this.tomorrowForm.get('task').valueChanges.pipe(debounceTime(2000)).subscribe(() => {
+    this.tomorrowSub = this.tomorrowForm.get('body').valueChanges.pipe(debounceTime(2000)).subscribe(() => {
       if (!this.tomorrowForm.valid) {
         this.tomorrowError = true
         return
       }
       this.tomorrowError = false
-      const task = this.findTask(this.tomorrow)
-      if (task) {
+      const task = {
+        body: this.tomorrowForm.get('body').value, 
+        date: this.tomorrow.format('MM-DD-YYYY'), 
+        userId: this.user.uid
+      }
+      const existingTask = this.findTask(this.tomorrow)
+      if (existingTask) {
         console.log(task)
-        this.patchTask(this.tomorrowForm.get('task').value, this.tomorrow, task.id)
+        this.patchTask(task, existingTask.id)
         return
       }
-      this.postTask(this.tomorrowForm.get('task').value, this.tomorrow)
+      this.postTask(task)
     })
     this.dateSub = this.todayForm.get('date').valueChanges.subscribe(() => {
       setTimeout(() => {
         this.showForms = false
         const selectedDate = this.todayForm.get('date').value
-        this.today = moment(selectedDate)
+        let todayM = moment(selectedDate)
+        this.today = moment(selectedDate).format('MM-DD-YYYY')
         this.yesterday = this.setYesterday(selectedDate)
         this.tomorrow = this.setTomorrow(selectedDate)
-        if (this.today.diff(moment(), 'days') > -1) {
+        if (todayM.diff(moment(), 'days') > -1) {
           this.showForms = true
         }
         if (this.userTasks) {
@@ -121,48 +134,45 @@ export class ActivityEditorComponent implements OnInit {
   }
 
   setTomorrow(today) {
-    console.log('setTomorrow', today,moment(today).add(1, 'days'))
     return moment(today).add(1, 'days')
   }
 
   findTask(day) {
-    const task = this.userTasks.find(t => moment(t.date.split('T')[0]).format('ll') === moment(day).format('ll'))
-    if (!task && (moment(task.date).day("Saturday") || moment(task.date).day("Sunday"))) {
-      console.log('today is the weekend!')
+    const task = this.userTasks.find(t => moment(t.date, "MM-DD-YYYY").format('ll') === moment(day).format('ll'))
+    if (!task) {
+      console.log('no task found')
+      return
     }
     return task
   }
 
   patchForms() {
     if (this.todaysTask) {
-      this.todayForm.get('task').patchValue(this.todaysTask.body, {emitEvent: false})
+      this.todayForm.get('body').patchValue(this.todaysTask.body, {emitEvent: false})
     } else {
-      this.todayForm.get('task').patchValue('', {emitEvent: false})
+      this.todayForm.get('body').patchValue('', {emitEvent: false})
     }
     if (this.tomorrowsTask) {
-      this.tomorrowForm.get('task').patchValue(this.tomorrowsTask.body, {emitEvent: false})
+      this.tomorrowForm.get('body').patchValue(this.tomorrowsTask.body, {emitEvent: false})
     } else {
-      this.tomorrowForm.get('task').patchValue('', {emitEvent: false})
+      this.tomorrowForm.get('body').patchValue('', {emitEvent: false})
     }
   }
 
-  postTask(newTask, date) {
-    const task = {body: newTask, date: date, userId: this.user.id}
+  postTask(task) {
     this._userService.postTask(task).then((res) => {
-      this.userTasks.push(res)
+      console.log(res)
+      this.update.emit()
       this.openSnackBar(this.generateMessage(), 'Saved')
     })
   }
 
-  patchTask(existingTask, date, taskId) {
-    const task = {body: existingTask, date: date, userId: this.user.id}
+  patchTask(task, taskId) {
     this._userService.patchTask(task, taskId).then((res: any) => {
-      this.userTasks = this.userTasks.filter(task => task.id !== res.id)
-      this.userTasks.push(res)
+      console.log(res)
+      this.update.emit()
       const message = this.generateMessage()
-      console.log(message)
       this.openSnackBar(message, 'Saved')
-      console.log(this.userTasks)
     })
   }
 

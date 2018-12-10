@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Inject } from '@angular/core';
+import { Component, OnChanges, Input, Inject, Output, EventEmitter } from '@angular/core';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material'
 import { FormGroup, FormControl } from '@angular/forms'
 import {MatSnackBar} from '@angular/material';
@@ -13,10 +13,11 @@ import { ValueConverter } from '@angular/compiler/src/render3/view/template';
   templateUrl: './goal-tracker.component.html',
   styleUrls: ['./goal-tracker.component.scss']
 })
-export class GoalTrackerComponent implements OnInit {
+export class GoalTrackerComponent implements OnChanges {
   @Input() userGoals
   @Input() user 
-  
+  @Output() update = new EventEmitter()
+
   step = 0
   showAddGoal: boolean
   editMode: boolean
@@ -28,7 +29,7 @@ export class GoalTrackerComponent implements OnInit {
     console.log('quarters', this.quarters)
   }
 
-  ngOnInit() {
+  ngOnChanges() {
     console.log(this.userGoals)
     if (this.userGoals) {
       this.quarters = this.getQuarters()
@@ -36,10 +37,9 @@ export class GoalTrackerComponent implements OnInit {
   }
 
   addGoal(goal: Goal) {
-    console.log('goal', goal)
-
+    console.log(goal)
     this._userService.postGoal(goal).then((res) => {
-      this.userGoals.push(res)
+      this.update.emit()
       this.quarters = this.getQuarters();
     })
   }
@@ -47,7 +47,7 @@ export class GoalTrackerComponent implements OnInit {
   deleteGoal(goalId) {
     this._userService.deleteGoal(goalId).then((res) => {
       console.log('deleted')
-      this.userGoals = this.userGoals.filter(goal => goal.id !== goalId)
+      this.update.emit()
       this.quarters = this.getQuarters()
     })
   }
@@ -65,7 +65,7 @@ export class GoalTrackerComponent implements OnInit {
   updateGoalStatus(goal) {
     goal.active = !goal.active;
     this._userService.patchGoal(goal).then((res) => {
-      console.log('goal updated', res)
+      this.update.emit()
       if (goal.active) {
         this.openSnackBar('Goal status updated', 'Saved')
       } else {
@@ -90,6 +90,7 @@ export class GoalTrackerComponent implements OnInit {
       let i = 0;
       this._userService.patchGoal(goal).then((res) => {
         console.log('goal updated', res)
+        this.update.emit()
         if (i === 0) {
           this.openSnackBar('Your goals have been updated', 'Saved')
         }
@@ -106,7 +107,7 @@ export class GoalTrackerComponent implements OnInit {
       quarter_year: quarter.year,
       date: moment().format('YYYY-MM-DD'),
       active: true,
-      userId: this.user.id
+      userId: this.user.uid
     }
     const dialogRef = this.dialog.open(GoalDialogComponent, {
       width: '350px',

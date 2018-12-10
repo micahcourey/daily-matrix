@@ -1,7 +1,7 @@
 export interface Task {
   body: string;
   date: string;
-  userId: number,
-  id?: number,
+  userId: string,
+  id?: string,
   weekday?: boolean
 }

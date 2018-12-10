@@ -8,18 +8,21 @@
       <mat-card-title>Sign Up</mat-card-title>
       <div>
         <form class="login-container" [formGroup]="signupForm">
+          <!-- <mat-form-field>
+            <input  formControlName="name" type="text" matInput placeholder="Name">
+          </mat-form-field> -->
           <mat-form-field>
             <input  formControlName="email" type="email" matInput placeholder="Email">
           </mat-form-field>
           <mat-form-field>
             <input formControlName="password" type="password" matInput placeholder="Password">
           </mat-form-field>
-          <button mat-raised-button color="primary" (click)="tryRegister()">Login</button>
+          <button mat-raised-button color="primary" (click)="tryRegister()">Sign Up</button>
         </form>
       </div>
-      <div class="social-signup">
+      <!-- <div class="social-signup">
         <button mat-raised-button color="primary" (click)="tryRegister()">Signup with Google</button>
-      </div>
+      </div> -->
     </mat-card>
   </div>
 </main>

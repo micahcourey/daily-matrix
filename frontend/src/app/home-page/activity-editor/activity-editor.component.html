@@ -33,8 +33,8 @@
       <mat-divider></mat-divider>
       <form class="task-form">
         <mat-form-field *ngIf="showForms" class="card-content" [formGroup]="todayForm">
-          <textarea matInput name="task" formControlName="task" placeholder="What are you doing today?"
-            cdkTextareaAutosize #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="2" cdkAutosizeMaxRows="10">
+          <textarea matInput name="body" formControlName="body" placeholder="What are you doing today?"
+            cdkTextareaAutosize #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="3" cdkAutosizeMaxRows="10">
           </textarea>
           <div class="form-error" *ngIf="todayError">
             Your activity must be at least 3 characters in length.
@@ -59,8 +59,8 @@
       <mat-divider></mat-divider>
       <form class="task-form">
         <mat-form-field *ngIf="showForms" class="card-content" [formGroup]="tomorrowForm">
-          <textarea matInput name="task" minRow="5" formControlName="task" placeholder="What are you doing tomorrow?"
-            cdkTextareaAutosize #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="2" cdkAutosizeMaxRows="10">
+          <textarea matInput name="body" minRow="5" formControlName="body" placeholder="What are you doing tomorrow?"
+            cdkTextareaAutosize #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="3" cdkAutosizeMaxRows="10">
           </textarea>
         </mat-form-field>
         <div class="form-error" *ngIf="tomorrowError">

@@ -73,6 +73,7 @@ export class UserService {
     return new Promise<any>((resolve, reject) => {
       let user = firebase.auth().onAuthStateChanged(function(user){
         if (user) {
+					this.user = user
           resolve(user);
         } else {
           reject('No user logged in');
@@ -93,121 +94,6 @@ export class UserService {
     })
   }
 
-
-  // login(user) {
-	// 	return new Promise( (resolve, reject) => {
-	// 		let headers: any = new HttpHeaders();
-	// 		headers.append('Content-Type', 'application/json');
-
-	// 		try{
-	// 			let loginSub = this.http.post(`${this.databaseUrl}/MatrixUsers/login`, user).pipe(map(this.extractData));
-
-	// 			loginSub.subscribe((res: any) => {
-	// 				if (res.errors) {
-	// 					console.error(res.errors);
-	// 					reject(res);
-	// 				} else {
-	// 					console.log(res);
-	// 					localStorage.setItem('matrix_auth_token', res.id);
-	// 					this.setUser(res.userId, res.id).then((user) => {
-	// 						resolve(user);
-	// 					});
-	// 				} 
-	// 			}, (response) => {
-  //         console.log(response)
-	// 				reject(response);
-	// 			});
-	// 		}catch(e){
-	// 			console.error(e);
-	// 		}
-	// 	});
-	// }
-
-	// isLoggedIn() {
-	// 	return !!localStorage.getItem('matrix_auth_token');
-	// }
-
-	// isAdmin() {
-	// 	if(!this.loggedIn || !this.user) {
-	// 		return false
-	// 	}
-	// 	if(this.user.realm === 'admin') {
-	// 		return true
-	// 	}
-	// 	return false
-	// }
-	 
-	// setUser(userId: string, token: string) {
-	// 	return new Promise( (resolve, reject) => {
-	// 		const sub = this.http.get(`${this.databaseUrl}/MatrixUsers/${userId}?access_token=${token}`)
-	// 		.pipe(map(this.extractData)).pipe(catchError(this.handleError))
-
-	// 		sub.subscribe((res) => { 
-	// 			localStorage.setItem('matrix_user', JSON.stringify(res))
-	// 			console.log(res)
-	// 			this.user = res;
-	// 			this.loggedIn = true;
-	// 			this.loginStatusChange.next({logged_in: true})
-	// 			resolve(res);
-	// 		}, (rej) => {
-	// 			console.log(rej)
-	// 		}); 
-	// 	});
-	// }
-
-	// logout() {
-	// 	localStorage.removeItem('matrix_auth_token');
-	// 	localStorage.removeItem('matrix_user');
-
-	// 	this.user = null;
-	// 	this.loggedIn = false;
-	// 	this.loginStatusChange.next({logged_in: false});
-	// }
-
-	// registerUser(user) {
-	// 	return new Promise((resolve, reject) => {
-	// 		const token = localStorage.getItem('matrix_auth_token');
-	// 		const sub = this.http.post(`${this.databaseUrl}/MatrixUsers/?access_token=${token}`, user)
-	// 			.pipe(map(this.extractData)).pipe(catchError(this.handleError));
-	// 		sub.subscribe((res) => { 
-	// 			console.log(res)
-	// 			resolve(res);
-	// 		}, (rej) => {
-	// 			console.log(rej)
-	// 		}); 
-	// 	});
-	// }
-
-	// resetPassword(newPassword) {
-	// 	return new Promise((resolve, reject) => {
-	// 		const token = localStorage.getItem('matrix_auth_token');
-	// 		const sub = this.http.post(`${this.databaseUrl}/MatrixUsers/reset-password?access_token=${token}`, newPassword)
-	// 			.pipe(map(this.extractData)).pipe(catchError(this.handleError));
-	// 		sub.subscribe((res) => { 
-	// 			console.log(res)
-	// 			resolve(res);
-	// 		}, (rej) => {
-	// 			console.log(rej)
-	// 		}); 
-	// 	});
-	// }
-	
-	// updateUser(user) {
-	// 	return new Promise((resolve, reject) => {
-	// 		const token = localStorage.getItem('matrix_auth_token');
-	// 		const sub = this.http.patch(`${this.databaseUrl}/MatrixUsers/${user.id}?access_token=${token}`, user)
-	// 			.pipe(map(this.extractData)).pipe(catchError(this.handleError));
-	// 		sub.subscribe((res) => { 
-	// 			console.log(res)
-	// 			localStorage.removeItem('matrix_user')
-	// 			localStorage.setItem('matrix_user', JSON.stringify(res))
-	// 			resolve(res);
-	// 		}, (rej) => {
-	// 			console.log(rej)
-	// 		}); 
-	// 	});
-	// }
-
 	getUsers() {
 		return new Promise((resolve, reject) => {
 			const token = localStorage.getItem('matrix_auth_token');
@@ -222,107 +108,60 @@ export class UserService {
 		});
 	}
 
-	getTasks() {
-		return new Promise((resolve, reject) => {
-			const token = localStorage.getItem('matrix_auth_token');
-			const sub = this.http.get(`${this.databaseUrl}/Tasks/?access_token=${token}`)
-				.pipe(map(this.extractData)).pipe(catchError(this.handleError));
-			sub.subscribe((res) => { 
-				console.log(res)
-				resolve(res);
-			}, (rej) => {
-				console.log(rej)
-			}); 
-		});
+	getTasks(userId) {
+		return new Promise<any>((resolve, reject) => {
+			this.db.collection('/tasks', ref => ref.where('userId', '==', userId))
+			.snapshotChanges().subscribe(snapshots => {
+				let tasks = []
+				snapshots.forEach(item => {
+					let task: any = item.payload.doc.data()
+					task.id = item.payload.doc.id
+					tasks.push(task)
+				})
+				console.log('userservice', tasks)
+				resolve(tasks)
+			})
+		})
 	}
 
-	getGoals() {
-		return new Promise((resolve, reject) => {
-			const token = localStorage.getItem('matrix_auth_token');
-			const sub = this.http.get(`${this.databaseUrl}/Goals/?access_token=${token}`)
-				.pipe(map(this.extractData)).pipe(catchError(this.handleError));
-			sub.subscribe((res) => { 
-				console.log(res)
-				resolve(res);
-			}, (rej) => {
-				console.log(rej)
-			}); 
-		});
+	getGoals(userId) {
+		return new Promise<any>((resolve, reject) => {
+			this.db.collection('/goals', ref => ref.where('userId', '==', userId)).snapshotChanges().subscribe(snapshots => {
+				let goals = [];
+				snapshots.forEach(item => {
+					let goal: any = item.payload.doc.data()
+					goal.id = item.payload.doc.id
+					goals.push(goal)
+				})
+				console.log(goals)
+				resolve(goals)
+			})
+		})
 	}
 
 
 
 	postTask(task) {
 		console.log(task)
-		return new Promise((resolve, reject) => {
-			const token = localStorage.getItem('matrix_auth_token');
-			const sub = this.http.post(`${this.databaseUrl}/Tasks/?access_token=${token}`, task)
-				.pipe(map(this.extractData)).pipe(catchError(this.handleError));
-			sub.subscribe((res) => { 
-				console.log(res)
-				resolve(res);
-			}, (rej) => {
-				console.log(rej)
-			}); 
-		});
+		return this.db.collection('tasks').add(task);
 	}
 
 	patchTask(task, taskId) {
-		return new Promise((resolve, reject) => {
-			console.log(task)
-			const token = localStorage.getItem('matrix_auth_token');
-			const sub = this.http.patch(`${this.databaseUrl}/Tasks/${taskId}?access_token=${token}`, task)
-				.pipe(map(this.extractData)).pipe(catchError(this.handleError));
-			sub.subscribe((res) => { 
-				console.log(res)
-				resolve(res);
-			}, (rej) => {
-				console.log(rej)
-			}); 
-		});
+		console.log(taskId, task)
+		return this.db.collection('tasks').doc(taskId).update(task);
 	}
 
 	postGoal(goal) {
-		return new Promise((resolve, reject) => {
-			const token = localStorage.getItem('matrix_auth_token');
-			console.log(`${this.databaseUrl}/Goals/?access_token=${token}`)
-			const sub = this.http.post(`${this.databaseUrl}/Goals/?access_token=${token}`, goal)
-				.pipe(map(this.extractData)).pipe(catchError(this.handleError));
-			sub.subscribe((res) => { 
-				console.log(res)
-				resolve(res);
-			}, (rej) => {
-				console.log(rej)
-			}); 
-		});
+		return this.db.collection('goals').add(goal)
 	}
 
 	patchGoal(goal) {
-		return new Promise((resolve, reject) => {
-			const token = localStorage.getItem('matrix_auth_token');
-			const sub = this.http.patch(`${this.databaseUrl}/Goals/${goal.id}?access_token=${token}`, goal)
-				.pipe(map(this.extractData)).pipe(catchError(this.handleError));
-			sub.subscribe((res) => { 
-				console.log(res)
-				resolve(res);
-			}, (rej) => {
-				console.log(rej)
-			}); 
-		});
+		console.log(goal)
+		return this.db.collection('goals').doc(goal.id).update(goal)
 	}
 
 	deleteGoal(goalId) {
-		return new Promise((resolve, reject) => {
-			const token = localStorage.getItem('matrix_auth_token');
-			const sub = this.http.delete(`${this.databaseUrl}/Goals/${goalId}?access_token=${token}`)
-				.pipe(map(this.extractData)).pipe(catchError(this.handleError));
-			sub.subscribe((res) => { 
-				console.log(res)
-				resolve(res);
-			}, (rej) => {
-				console.log(rej)
-			}); 
-		});
+		return this.db.collection('goals').doc(goalId).delete()
 	}
 
 

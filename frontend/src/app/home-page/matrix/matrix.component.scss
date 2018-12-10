@@ -26,3 +26,13 @@ td {
 .name-col {
   width: 200px;
 }
+.calendar {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100vw;
+}
+.day-box {
+  width: 200px;
+  height: 200px;
+  border: 1px solid #d3d3d3;
+}

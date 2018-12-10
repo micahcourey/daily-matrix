@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import {MatDatepicker} from '@angular/material/datepicker';
 import { SubscriptionLike as ISubscription } from 'rxjs'
 import * as moment from 'moment'
 import { User } from 'src/app/interfaces/user.interface';
@@ -8,47 +9,64 @@ import { Task } from 'src/app/interfaces/task.interface';
 @Component({
   selector: 'matrix',
   templateUrl: './matrix.component.html',
-  styleUrls: ['./matrix.component.scss']
+  styleUrls: ['./matrix.component.scss'],
 })
 export class MatrixComponent implements OnInit {
   @Input() tasks: Array<Task>;
-  @Input() users: Array<User>;
+  @Input() user
 
   matrix: Array<any>;
-  matrixColumns = ['name', 'yesterday', 'today', 'tomorrow']
+  matrixColumns = ['day', 'task']
   selectedDate: FormControl
   dateSub: ISubscription
+  dayArray: Array<any>
   
   constructor() { 
     this.selectedDate = new FormControl(new Date());
     this.dateSub = this.selectedDate.valueChanges.subscribe(() => {
-      this.matrix = this.setMatrix(this.users, this.selectedDate.value)
+      console.log('datechanged', moment(this.selectedDate.value).get('month'))
+      this.dayArray = this.getMonth(moment(this.selectedDate.value).get('month'), moment(this.selectedDate.value).get('year'))
+      this.matrix = this.setMatrix(this.selectedDate.value)
+      console.log(this.matrix, this.dayArray)
     })
+    this.dayArray = this.getMonth(moment().get('month'), moment().get('year'))
   }
 
   ngOnInit() {
-    this.matrix = this.setMatrix(this.users, moment().format('YYYY-MM-DD'));
+    this.matrix = this.setMatrix(moment().format('YYYY-MM-DD'));
+    console.log(this.matrix)
   }
 
-  setMatrix(users, date) { 
+  getMonth(month: number, year: number) {
+    let days = []
+    let daysInMonth = moment(month).daysInMonth()
+    this.dayArray = []
+    let i = 1
+    while(daysInMonth) {
+      let date = moment([year, month, i]).format("YYYY-MM-DD")
+      let day = moment([year, month, i]).format("dddd, MMMM Do");
+      let dayObj = {date: date, day: day}
+      days.push(dayObj);
+      i++
+      daysInMonth--
+    }
+    return days
+  }
+
+  setMatrix(date) { 
     const matrix = []   
-    users.forEach((user: User, i) => {
-      const userTasks: Array<Task> = this.tasks.filter(task => task.userId === user.id)
-      console.log(user.username, userTasks)
-      console.log(user, i)
+    this.dayArray.forEach((day) => {
+      const userTasks: Array<Task> = this.tasks.filter(task => task.userId === this.user.uid)
       matrix.push({
-        username: user.username,
-        tasks: userTasks,
-        yesterday: this.findTask(moment(date).subtract(1, 'days'), userTasks),
-        today: this.findTask(moment(date), userTasks),
-        tomorrow: this.findTask(moment(date).add(1, 'days'), userTasks),
+        task: this.findTask(moment(day.date), userTasks),
+        date: day.day,
       })
     })
     return matrix
   }
 
   findTask(day, tasks) {
-    const task = tasks.find(t => moment(t.date.split('T')[0]).format('ll') === moment(day).format('ll'))
+    const task = tasks.find(t => moment(t.date).format('ll') === moment(day).format('ll'))
     if (!task) {
       return ''  
     }
@@ -56,6 +74,12 @@ export class MatrixComponent implements OnInit {
       console.log('today is the weekend!')
     }
     return task.body
+  }
+
+  chosenMonthHandler(evt) {
+    console.log(evt)
+    this.dayArray = this.getMonth(moment(evt).get('month'), moment(evt).get('year'))
+    this.matrix = this.setMatrix(evt)
   }
 
 }

@@ -19,10 +19,10 @@ export class SignupPageComponent implements OnInit {
   isError: boolean;
   user: any;
 
-  constructor(private authService: AuthService) { 
+  constructor(private authService: AuthService, private router: Router) { 
     this.signupForm = new FormGroup({    
 			email: new FormControl('', [ Validators.required, Validators.email ]),
-			password: new FormControl('', [ ]),
+			password: new FormControl('', [Validators.required]),
     })
   }
 
@@ -35,6 +35,8 @@ export class SignupPageComponent implements OnInit {
       console.log(res);
       this.errorMessage = "";
       this.successMessage = "Your account has been created";
+      this.router.navigate(['/home']);
+
     }, err => {
       console.log(err);
       this.errorMessage = err.message;

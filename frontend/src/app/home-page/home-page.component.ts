@@ -6,6 +6,7 @@ import { AuthService } from './../services/auth.service'
 import { User } from '../services/user.model'
 import { Task } from '../interfaces/task.interface'
 import { Goal } from '../interfaces/goal.interface'
+import * as moment from 'moment'
 
 @Component({
   selector: 'app-home-page',
@@ -29,35 +30,38 @@ export class HomePageComponent implements OnInit {
     public snackBar: MatSnackBar, 
     private ngZone: NgZone
   ) { 
-
+    this.allTasks = new Array<Task>();
+    this.allGoals = new Array<Goal>();
   }
 
   ngOnInit() {
     this.route.data.subscribe(routeData => {
       let data = routeData['data'];
+      console.log('data', data)
       if (data) {
         this.user = data;
         console.log('user', this.user)
       }
     })
-    this.userService.getTasks().then((tasks: Array<any>) => {
+    this.getTasks()
+    this.getGoals()
+  }
+
+  getTasks() {
+    this.userService.getTasks(this.user.uid).then((tasks: Array<any>) => {
       console.log(tasks)
-      this.allTasks = tasks
-      this.userTasks = tasks.filter(task => task.userId === this.user.uid)
-      console.log('userTasks', this.userTasks)
+      this.userTasks = tasks;
     }, (error) => {
       console.log(error)
     })
-    this.userService.getGoals().then((goals: Array<any>) => {
-      console.log('all goals', goals)
-      this.allGoals = goals
-      this.userGoals = goals.filter(goal => goal.userId === this.user.uid)
+  }
+
+  getGoals() {
+    this.userService.getGoals(this.user.uid).then((goals: Array<any>) => {
+      console.log(goals)
+      this.userGoals = goals
     }, (error) => {
       console.log(error)
-    })
-    this.userService.getUsers().then((users: Array<User>) => {
-      this.users = users;
-      console.log('users', this.users)
     })
   }
 

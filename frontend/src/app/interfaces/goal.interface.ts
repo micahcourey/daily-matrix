@@ -4,6 +4,6 @@ export interface Goal {
   quarter: number,
   active: boolean,
   quarter_year: number,
-  userId: number,
-  id?: number,
+  userId: string,
+  id?: string,
 }

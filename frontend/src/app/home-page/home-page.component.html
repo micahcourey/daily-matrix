@@ -3,7 +3,7 @@
   <span class="spacer"></span>
   <button mat-button [matMenuTriggerFor]="menu">
     <mat-icon>person</mat-icon>
-    {{user.username}}
+    {{user.email}}
   </button>
   <mat-menu #menu="matMenu">
     <button *ngIf="isAdmin" routerLink="/admin" mat-menu-item>Administration</button>
@@ -17,21 +17,22 @@
 
     <mat-tab label="Editor">
       <div class="tab-body">
-        <activity-editor *ngIf="user && userTasks" [user]="user" [userTasks]="userTasks"></activity-editor>
+        <activity-editor *ngIf="user && userTasks" (update)="getTasks()" [user]="user" [userTasks]="userTasks"></activity-editor>
         <mat-divider class="divider" [vertical]="true"></mat-divider>
-        <goal-tracker *ngIf="user && userGoals" [user]="user" [userGoals]="userGoals"></goal-tracker>
+        <goal-tracker *ngIf="user && userGoals" (update)="getGoals()" [user]="user" [userGoals]="userGoals"></goal-tracker>
       </div>
     </mat-tab>
 
     <mat-tab label="Matrix">
       <ng-template matTabContent>
-        <matrix [tasks]="allTasks" [users]="users"></matrix>
+        <matrix [tasks]="userTasks" [user]="user"></matrix>
       </ng-template>
     </mat-tab>
 
-    <mat-tab label="Leaderboard">
+    <mat-tab label="Statistics">
       <ng-template matTabContent>
-        <leaderboard [tasks]="allTasks" [users]="users"></leaderboard>
+        <!-- <leaderboard [tasks]="userTasks"></leaderboard> -->
+        <h1>Coming soon...</h1>
       </ng-template>
     </mat-tab>
 
